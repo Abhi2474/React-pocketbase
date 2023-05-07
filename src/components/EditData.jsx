@@ -2,7 +2,7 @@ import { Formik, Form, ErrorMessage, Field } from "formik";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { pb } from "../PocketBase";
-import { QueryClient, useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("name is required"),
@@ -15,29 +15,37 @@ const formDiv = "flex flex-col my-2 text-lg";
 const field = "rounded px-4 py-2 bg-green-950 text-white outline-none";
 const errMsg = "text-red-100";
 
-const Data = () => {
+const EditData = ({ editData, toggleModal }) => {
+  const queryClient = useQueryClient();
 
-  const queryClient = useQueryClient()
-
-  const queryPost = useMutation(async (values) => {
-    const record = await pb.collection("user").create(values);
-    return record;
-  },{
-    onSuccess:()=>{
-      queryClient.invalidateQueries()
+  const queryUpdate = useMutation(
+    async (values) => {
+      const record = await pb.collection("user").update(editData.id, values);
+      return record;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries();
+      },
     }
-  });
+  );
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (values) => {
     try {
-      await queryPost.mutateAsync(values);
+      await queryUpdate.mutateAsync(values);
+      // Success, handle any necessary actions
     } catch (error) {
+      // Handle error
       console.log(error);
     }
-    resetForm();
+    toggleModal();
   };
 
-  const initialValues = { name: "", profession: "", income: "" };
+  const initialValues = {
+    name: editData.name,
+    profession: editData.profession,
+    income: editData.income,
+  };
 
   return (
     <>
@@ -47,8 +55,8 @@ const Data = () => {
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className="py-5 my-4 flex flex-col justify-between items-center bg-gradient-to-r from-green-500 to-green-600">
-            <h1 className="text-3xl text-center font-bold">Data Form</h1>
+          <Form className="py-5 my-4 flex flex-col justify-between items-center">
+            <h1 className="text-3xl text-center font-bold">Edit Data Form</h1>
 
             <div className={formDiv}>
               <label className={label} htmlFor="name">
@@ -79,11 +87,11 @@ const Data = () => {
             </div>
 
             <button
-              className="bg-green-100 my-4 px-4 rounded py-1 text-lg"
+              className="bg-green-800 my-4 px-4 rounded py-1 text-lg hover:bg-green-950 text-white font-bold"
               type="submit"
               disabled={isSubmitting}
             >
-              Create
+              Update
             </button>
           </Form>
         )}
@@ -92,4 +100,4 @@ const Data = () => {
   );
 };
 
-export default Data;
+export default EditData;

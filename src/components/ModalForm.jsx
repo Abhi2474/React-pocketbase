@@ -1,24 +1,18 @@
 import React, { useState } from 'react';
-import Data from './Data';
+import EditData from './EditData';
 import { AiFillCloseCircle } from 'react-icons/ai';
 
-function ModalForm({isOpen, setIsOpen}) {
-//   const [isOpen, setIsOpen] = useState(false);
+function ModalForm({ isOpen, setIsOpen, editData }) {
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Handle form submission logic here
   };
 
   return (
     <div>
       {isOpen && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div className="flex items-center justify-center min-h-screen pt-4 pb-20 text-center sm:block">
             <div
               className="fixed inset-0 transition-opacity"
               aria-hidden="true"
@@ -35,8 +29,8 @@ function ModalForm({isOpen, setIsOpen}) {
               aria-modal="true"
               aria-labelledby="modal-headline"
             >
-			  <AiFillCloseCircle onClick={toggleModal} className='absolute right-6 top-3 cursor-pointer text-2xl hover:text-red-700 text-red-400'/>
-              <Data/>
+              <AiFillCloseCircle onClick={toggleModal} className='cursor-pointer absolute right-4 top-4 text-2xl hover:text-red-500'/>
+              <EditData editData={editData} toggleModal={toggleModal}/>
             </div>
           </div>
         </div>

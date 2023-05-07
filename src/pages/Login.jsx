@@ -1,6 +1,5 @@
 import { Formik, Form, ErrorMessage, Field } from 'formik'
 import React from 'react'
-import InputControl from '../components/InputControl'
 import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
 

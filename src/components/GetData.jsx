@@ -1,30 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import { pb } from '../PocketBase';
 import Templete from './Templete';
+import { useQuery } from 'react-query';
 
 const GetData = () => {
 
-	const [ data, setData ] = useState([])
-	
-	useEffect(() => {
-		async function fetchRecords() {
+	const fetchRecords = async () => {
+		try {
 			const records = await pb.collection('user').getFullList({
-			  sort: '-created',
+				sort: '-created',
 			});
-			console.log(records);
-			setData(records)
-		  }
-		  fetchRecords();
-	}, [])
+			return records
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	const {data, isLoading, error}  = useQuery('user', fetchRecords)
+	// console.log(data);
 
 	return (
 		<div className='container px-5 flex flex-wrap  mb-20 mx-auto'>
-			{
-				data.map((item)=>{
+			{ !isLoading ?
+				data.map((item) => {
 					return (
 						<Templete key={item.id} item={item} />
 					)
 				})
+				: ''
 			}
 		</div>
 	)
